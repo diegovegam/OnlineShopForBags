@@ -29,3 +29,9 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+.product-img {
+    height: 250px; /* fixed height for alignment */
+    width: 100%; /* fill card width */
+    object-fit: cover; /* crop instead of stretch */
+}

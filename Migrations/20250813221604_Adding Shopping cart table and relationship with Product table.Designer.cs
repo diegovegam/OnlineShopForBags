@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineShopForBags.Data;
 
@@ -11,9 +12,11 @@ using OnlineShopForBags.Data;
 namespace OnlineShopForBags.Migrations
 {
     [DbContext(typeof(OnlineShopDbContext))]
-    partial class OnlineShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250813221604_Adding Shopping cart table and relationship with Product table")]
+    partial class AddingShoppingcarttableandrelationshipwithProducttable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -60,59 +63,45 @@ namespace OnlineShopForBags.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("Id");
-
-                    b.ToTable("ShoppingCart");
-                });
-
-            modelBuilder.Entity("OnlineShopForBags.Models.Domain.ShoppingCartProduct", b =>
-                {
-                    b.Property<Guid>("ShoppingCartId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("ProductId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<int>("Amount")
+                    b.Property<int>("Price")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("ShoppingCartId", "ProductId");
+                    b.HasKey("Id");
 
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ShoppingCartProduct");
+                    b.ToTable("ShoppingCart");
                 });
 
-            modelBuilder.Entity("OnlineShopForBags.Models.Domain.ShoppingCartProduct", b =>
+            modelBuilder.Entity("ProductShoppingCart", b =>
                 {
-                    b.HasOne("OnlineShopForBags.Models.Domain.Product", "Product")
-                        .WithMany("ShoppingCart")
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ShoppingCartId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("ProductId", "ShoppingCartId");
+
+                    b.HasIndex("ShoppingCartId");
+
+                    b.ToTable("ProductShoppingCart");
+                });
+
+            modelBuilder.Entity("ProductShoppingCart", b =>
+                {
+                    b.HasOne("OnlineShopForBags.Models.Domain.Product", null)
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OnlineShopForBags.Models.Domain.ShoppingCart", "ShoppingCart")
-                        .WithMany("Product")
+                    b.HasOne("OnlineShopForBags.Models.Domain.ShoppingCart", null)
+                        .WithMany()
                         .HasForeignKey("ShoppingCartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Product");
-
-                    b.Navigation("ShoppingCart");
-                });
-
-            modelBuilder.Entity("OnlineShopForBags.Models.Domain.Product", b =>
-                {
-                    b.Navigation("ShoppingCart");
-                });
-
-            modelBuilder.Entity("OnlineShopForBags.Models.Domain.ShoppingCart", b =>
-                {
-                    b.Navigation("Product");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,21 +1,32 @@
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using OnlineShopForBags.Models;
+using OnlineShopForBags.Models.ViewModels;
+using OnlineShopForBags.Repositories;
 
 namespace OnlineShopForBags.Controllers
 {
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IProductRepository productRepository;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, IProductRepository productRepository)
         {
             _logger = logger;
+            this.productRepository = productRepository;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var products = await productRepository.GetAll(null, null, null);
+            var viewModel = new ProductViewModel
+            {
+                Products = products
+            };
+
+            return View(viewModel);
         }
 
         public IActionResult Privacy()

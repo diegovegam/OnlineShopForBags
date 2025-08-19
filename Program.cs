@@ -11,6 +11,9 @@ builder.Services.AddDbContext<OnlineShopDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("OnlineShopBagsDBConnectionString")));
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IImageUploadRepository, ImageUploadRepository>();
+builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+builder.Services.AddScoped<IShoppingCartProductRepository, ShoppingCartProductRepository>();
 
 var app = builder.Build();
 

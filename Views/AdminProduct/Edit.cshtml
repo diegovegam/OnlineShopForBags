@@ -1,0 +1,137 @@
+﻿@model OnlineShopForBags.Models.ViewModels.ProductViewModel
+@{
+}
+<div class="container py-5">
+	<form method="post">
+		<div class="mb-3">
+			<label class="form-label">Código</label>
+			<input type="number" class="form-control" id="code" asp-for="Code" required></input>
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">Nombre</label>
+			<input type="text" class="form-control" id="name" asp-for="Name" required></input>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Precio</label>
+			<input type="number" class="form-control" id="price" asp-for="Price" required></input>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Cantidad</label>
+			<input type="number" class="form-control" id="quantity" asp-for="Quantity" required></input>
+		</div>
+		<div class="mb-3">
+			<label class="form-label">Descripción del producto</label>
+			<input type="text" class="form-control" id="description" asp-for="Description"></input>
+		</div>
+		
+		<div class="mb-3">
+			<label class="form-label">Subir Imagen</label>
+			<input type="file" id="ImageUpload" class="form-control"></input>
+
+			<img src="@Model.ImageUrl" class="mt-3" id="ImageDisplay" style="display:block;width: 100px" />
+		</div>
+
+		<div class="mb-3">
+			<label class="form-label">URL de la imagen</label>
+			<input type="text" class="form-control" id="ImageURL" asp-for="ImageUrl"></input>
+		</div>
+
+		<div class="mb-3">
+			<a class="btn btn-secondary" asp-controller="AdminProduct" asp-action="GetAll">Cerrar</a>
+			<button type="submit" class="btn btn-outline-dark" asp-controller="AdminProduct" asp-action="Edit">Guardar</button>
+		</div>
+
+	</form>
+</div>
+
+
+@section Scripts
+{
+	<script>
+		const inputName = document.getElementById('name');
+		const inputPrice = document.getElementById('price');
+		const inputQuantity = document.getElementById('quantity');
+		const inputCode = document.getElementById('code');
+		const inputDescription = document.getElementById('description');
+
+		const inputImageUpload = document.getElementById('ImageUpload');
+		const inputImageUrl = document.getElementById('ImageURL');
+		const inputImageDisplay = document.getElementById('ImageDisplay');
+
+		const ImageUploadInput = document.getElementById('ImageUpload');
+	
+
+
+
+		let nameChanged = @ViewBag.Name.ToString().ToLower();
+		let priceChanged = @ViewBag.Price.ToString().ToLower();
+		let quantityChanged = @ViewBag.Quantity.ToString().ToLower();
+		let codeChanged = @ViewBag.Code.ToString().ToLower();
+		let imageUrlChanged = @ViewBag.ImageUrl.ToString().ToLower();
+		let descriptionChanged = @ViewBag.Description.ToString().ToLower();
+
+		
+		if(nameChanged)
+		{
+			inputName.classList.add("is-valid");
+
+		}
+
+		if(priceChanged)
+		{
+			inputPrice.classList.add("is-valid");
+
+		}
+
+		if(quantityChanged)
+		{
+			inputQuantity.classList.add("is-valid");
+
+		}
+
+		if(codeChanged)
+		{
+			inputCode.classList.add("is-valid");
+
+		}
+
+		if(imageUrlChanged)
+		{
+			inputImageUrl.classList.add("is-valid");
+
+		}
+
+		if(descriptionChanged)
+		{
+			inputDescription.classList.add("is-valid");
+
+		}
+
+		
+
+		async function UploadImage(e)
+		{
+			console.log(e.target.files[0]);
+			let data = new FormData();
+			data.append('image', e.target.files[0])
+			await fetch('/api/images', {
+				method: 'POST',
+				headers: {
+					'Accept': '*/*'
+				},
+				body: data
+			}).then(response => response.json())
+				.then(result => {
+					inputImageUrl.value = result.link;
+					inputImageDisplay.src = result.link;
+					inputImageUrl.classList.add("disabled");
+				});
+		}
+
+		ImageUploadInput.addEventListener('change', UploadImage);
+
+		console.log("aqui estamos")
+
+	</script>
+}

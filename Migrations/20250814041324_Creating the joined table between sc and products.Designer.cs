@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using OnlineShopForBags.Data;
 
@@ -11,9 +12,11 @@ using OnlineShopForBags.Data;
 namespace OnlineShopForBags.Migrations
 {
     [DbContext(typeof(OnlineShopDbContext))]
-    partial class OnlineShopDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250814041324_Creating the joined table between sc and products")]
+    partial class Creatingthejoinedtablebetweenscandproducts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,14 +91,14 @@ namespace OnlineShopForBags.Migrations
 
             modelBuilder.Entity("OnlineShopForBags.Models.Domain.ShoppingCartProduct", b =>
                 {
-                    b.HasOne("OnlineShopForBags.Models.Domain.Product", "Product")
-                        .WithMany("ShoppingCart")
+                    b.HasOne("OnlineShopForBags.Models.Domain.ShoppingCart", "ShoppingCart")
+                        .WithMany("Product")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("OnlineShopForBags.Models.Domain.ShoppingCart", "ShoppingCart")
-                        .WithMany("Product")
+                    b.HasOne("OnlineShopForBags.Models.Domain.Product", "Product")
+                        .WithMany("ShoppingCart")
                         .HasForeignKey("ShoppingCartId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

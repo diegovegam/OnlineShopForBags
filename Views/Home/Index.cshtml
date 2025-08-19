@@ -1,4 +1,6 @@
-﻿@{
+﻿@model OnlineShopForBags.Models.ViewModels.ProductViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -6,14 +8,14 @@
 <nav class="navbar navbar-expand-lg border-bottom px-4 py-2">
     <div class="container-fluid">
         <button class="btn btn-outline-secondary me-2">☰ MENU</button>
-        <a class="navbar-brand mx-auto fw-bold fs-3 text-uppercase" href="#">FUCKING AWESOME</a>
+        <a class="navbar-brand mx-auto fw-bold fs-3 text-uppercase" href="#">Bolsos Salsa</a>
         <form class="d-flex me-3">
             <input class="form-control me-2" type="search" placeholder="Search">
             <button class="btn btn-outline-dark" type="submit">🔍</button>
         </form>
         <div>
-            <a href="#" class="me-3 text-decoration-none text-dark">ACCOUNT</a>
-            <a href="#" class="text-decoration-none text-dark">CART</a>
+            <a href="#" class="me-3 text-decoration-none text-dark">Cuenta</a>
+            <a href="#" class="text-decoration-none text-dark"><i id="shoppingCart" class="bi bi-cart-dash-fill">0</i></a>
         </div>
     </div>
 </nav>
@@ -28,21 +30,78 @@
 
     <!-- Product Grid -->
     <div class="row mt-4">
-       @*  @foreach (var product in Model.Products)
+        @foreach (var product in Model.Products)
         {
             <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                 <div class="card h-100 border-0 text-center position-relative">
-                    @if (product.IsSoldOut)
+                     @if (product.Quantity == 0)
                     {
                         <span class="position-absolute top-0 start-0 bg-white text-dark small px-2 py-1 fw-bold">SOLD OUT</span>
                     }
-                    <img src="@product.ImageUrl" class="card-img-top" alt="@product.Name">
+                    <img src="@product.ImageUrl" class="card-img-top product-img" alt="@product.Name">
                     <div class="card-body p-2">
                         <p class="card-text mb-1">@product.Name</p>
-                        <small class="text-muted">€ @product.Price.ToString("N1")</small>
+                        <small class="text-muted" >₡ @product.Price.ToString("N1")</small>
+                        <label class="productPrice" hidden >@product.Price</label>
+                        <a class="btn btn-light AddProductBtn" data-productid="@product.Id" data-productprice="@product.Price" >Agregar</a>
                     </div>
                 </div>
+                
             </div>
-        } *@
+        } 
     </div>
 </div>
+
+
+@section Scripts
+{
+    <script>
+        const addProductButtons = document.querySelectorAll('.AddProductBtn');
+        const shoppingCart = document.getElementById('shoppingCart');
+
+        function GetQuantityProdsInShopCart()
+        {
+            fetch('/api/ShoppingCartAPI/GetQuantityProdsInShopCart',
+                    {
+                        method: 'GET',
+                        headers:
+                        {
+                            'Content-Type': 'application/json',
+                            'Accept': '*/*'
+                        }
+                     })
+                      .then(response => {
+                          return response.json();
+                      })
+                     .then(data => shoppingCart.innerHTML = parseFloat(shoppingCart.innerHTML) + data);
+        }
+
+        addProductButtons.forEach(button => {
+                button.addEventListener('click', async function () {
+                    const productId = this.dataset.productid;
+                    const productPrice = this.dataset.productprice;
+                    console.log(productId);
+                    console.log(productPrice);
+                     fetch('/api/ShoppingCartAPI/Add',
+                    {
+                        method: 'POST',
+                        headers:
+                        {
+                            'Content-Type': 'application/json',
+                            'Accept': '*/*'
+                        },
+                        body: JSON.stringify({ProductId: productId, Quantity: 1, Amount: productPrice})
+                     })
+                     .then(() => {
+                       button.classList.add('disabled');})
+                     .then(shoppingCart.innerHTML = parseFloat(shoppingCart.innerHTML) + 1);
+                    });
+                    
+                });
+
+        
+
+        GetQuantityProdsInShopCart();
+
+    </script>
+}
